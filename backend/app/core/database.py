@@ -8,23 +8,13 @@ from app.core.config import settings
 
 DATABASE_URL = settings.DATABASE_URL
 
+
 # ==========================================================
 # AIVEN SSL
 # ==========================================================
 
 BASE_DIR = Path(__file__).resolve().parents[2]
 CA_FILE = BASE_DIR / "certs" / "aiven-ca.pem"
-
-
-# ==========================================================
-# DEBUG DATABASE
-# ==========================================================
-
-print("=" * 70)
-print("DATABASE URL :", DATABASE_URL)
-print("CA FILE      :", CA_FILE)
-print("CA EXISTS    :", CA_FILE.exists())
-print("=" * 70)
 
 
 # ==========================================================
@@ -42,7 +32,7 @@ engine = create_engine(
     DATABASE_URL,
     connect_args=connect_args,
     pool_pre_ping=True,
-    echo=True,
+    echo=False,
 )
 
 
@@ -57,17 +47,13 @@ try:
             text("SELECT DATABASE()")
         ).scalar()
 
-        print("=" * 70)
         print("DATABASE AKTIF :", db_name)
         print("KONEKSI AIVEN  : BERHASIL")
-        print("=" * 70)
 
 except Exception as e:
 
-    print("=" * 70)
     print("GAGAL KONEK DATABASE")
     print(e)
-    print("=" * 70)
 
 
 # ==========================================================
