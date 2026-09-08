@@ -1,0 +1,6 @@
+Folder PATH listing for volume System
+Volume serial number is F663-D5F0
+C:\KASIR_AI_KIRIM_AMAN\BACKEND\BACKEND
+Invalid path - \KASIR_AI_KIRIM_AMAN\BACKEND\BACKEND
+No subfolders exist 
+

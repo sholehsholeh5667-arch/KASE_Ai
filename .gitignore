@@ -1,0 +1,73 @@
+# =========================
+# SECRET / ENVIRONMENT
+# =========================
+.env
+.env.*
+!.env.example
+
+# =========================
+# PYTHON
+# =========================
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+
+# =========================
+# NODE / FRONTEND
+# =========================
+node_modules/
+dist/
+.vite/
+
+# =========================
+# BACKUP / TEMPORARY FILES
+# =========================
+*.bak
+*.backup
+*.BAK
+*.tmp
+*.log
+
+# =========================
+# TEST FILES
+# =========================
+test_*.py
+*_test.py
+
+# =========================
+# IDE
+# =========================
+.vscode/
+.idea/
+
+# =========================
+# DATABASE BACKUP
+# =========================
+*.sql
+*.sqlite
+*.sqlite3
+
+# =========================
+# UPLOADED USER FILES
+# =========================
+backend/uploads/*
+!backend/uploads/.gitkeep
+# =========================
+# EXTRA BACKUP / EXPERIMENTAL
+# =========================
+*backup*
+*BACKUP*
+*BAK*
+*_backup.*
+*_BACKUP.*
+
+# =========================
+# DEVELOPMENT JUNK
+# =========================
+*.exe
+12.0.2
+assert
+python

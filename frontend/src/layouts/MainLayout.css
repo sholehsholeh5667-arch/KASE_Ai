@@ -1,0 +1,277 @@
+/* ==========================================================
+   RESET
+========================================================== */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background: #f5f6fa;
+    color: #222;
+}
+
+/* ==========================================================
+   LAYOUT
+========================================================== */
+
+.layout {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* ==========================================================
+   SIDEBAR
+========================================================== */
+
+.sidebar {
+    width: 260px;
+    background: #1f2937;
+    color: white;
+    display: flex;
+    flex-direction: column;
+}
+
+.logo {
+    padding: 25px;
+    text-align: center;
+    border-bottom: 1px solid rgba(255,255,255,.1);
+}
+
+.logo h2 {
+    font-size: 24px;
+    color: white;
+}
+
+.logo span {
+    color: #60a5fa;
+    font-size: 14px;
+}
+
+/* ==========================================================
+   MENU
+========================================================== */
+
+nav {
+    flex: 1;
+    padding: 15px 10px;
+}
+
+.menu {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    text-decoration: none;
+
+    color: #d1d5db;
+
+    padding: 12px 16px;
+
+    border-radius: 10px;
+
+    margin-bottom: 6px;
+
+    transition: .25s;
+}
+
+.menu:hover {
+    background: #374151;
+    color: white;
+}
+
+.menu.active {
+    background: #2563eb;
+    color: white;
+}
+
+.icon {
+    font-size: 18px;
+}
+
+/* ==========================================================
+   LOGOUT
+========================================================== */
+
+.logout {
+    margin: 20px;
+    border: none;
+    outline: none;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+
+    background: #dc2626;
+
+    color: white;
+
+    padding: 12px;
+
+    border-radius: 10px;
+
+    cursor: pointer;
+
+    transition: .25s;
+}
+
+.logout:hover {
+    background: #b91c1c;
+}
+
+/* ==========================================================
+   CONTENT
+========================================================== */
+
+.content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+/* ==========================================================
+   TOPBAR
+========================================================== */
+
+.topbar {
+    background: white;
+
+    padding: 20px 30px;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    box-shadow: 0 2px 8px rgba(0,0,0,.05);
+}
+
+.topbar h2 {
+    font-size: 24px;
+}
+
+.topbar small {
+    color: #6b7280;
+}
+
+/* ==========================================================
+   PAGE
+========================================================== */
+
+.page-content {
+    flex: 1;
+    padding: 25px;
+}
+
+/* ==========================================================
+   CARD
+========================================================== */
+
+.card {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 3px 10px rgba(0,0,0,.05);
+}
+
+/* ==========================================================
+   TABLE
+========================================================== */
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+}
+
+table th {
+    background: #2563eb;
+    color: white;
+    padding: 12px;
+}
+
+table td {
+    padding: 12px;
+    border-bottom: 1px solid #eee;
+}
+
+table tr:hover {
+    background: #f9fafb;
+}
+
+/* ==========================================================
+   BUTTON
+========================================================== */
+
+button {
+    cursor: pointer;
+}
+
+.btn-primary {
+    background: #2563eb;
+    color: white;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 8px;
+}
+
+.btn-primary:hover {
+    background: #1d4ed8;
+}
+
+/* ==========================================================
+   RESPONSIVE
+========================================================== */
+
+@media (max-width: 900px) {
+
+    .sidebar {
+        width: 80px;
+    }
+
+    .logo span {
+        display: none;
+    }
+
+    .menu span:last-child {
+        display: none;
+    }
+
+    .logout span {
+        display: none;
+    }
+
+    .topbar {
+        padding: 15px;
+    }
+
+    .page-content {
+        padding: 15px;
+    }
+
+}
+
+@media (max-width: 700px) {
+
+    .layout {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        width: 100%;
+    }
+
+    nav {
+        display: flex;
+        overflow-x: auto;
+    }
+
+    .menu {
+        white-space: nowrap;
+        margin-right: 10px;
+    }
+
+}

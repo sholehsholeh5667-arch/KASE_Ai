@@ -1,0 +1,124 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+/* ==========================================================
+   GLOBAL
+========================================================== */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+
+/* ==========================================================
+   ROOT
+========================================================== */
+
+:root {
+  font-family: "Inter", sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color: #0f172a;
+  background-color: #f8fafc;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+
+/* ==========================================================
+   BODY
+========================================================== */
+
+body {
+  min-width: 320px;
+  min-height: 100vh;
+
+  background: #f1f5f9;
+
+  color: #0f172a;
+}
+
+
+/* ==========================================================
+   ROOT APP
+========================================================== */
+
+#root {
+  min-height: 100vh;
+}
+
+
+/* ==========================================================
+   SCROLLBAR
+========================================================== */
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #e2e8f0;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #94a3b8;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #64748b;
+}
+
+
+/* ==========================================================
+   LINK
+========================================================== */
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+
+/* ==========================================================
+   BUTTON
+========================================================== */
+
+button {
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+
+/* ==========================================================
+   IMAGE
+========================================================== */
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+
+/* ==========================================================
+   FORM
+========================================================== */
+
+input,
+textarea,
+select {
+  outline: none;
+  font-family: inherit;
+}

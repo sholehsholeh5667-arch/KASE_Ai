@@ -1,0 +1,195 @@
+/* ==========================================================
+   MODAL OVERLAY
+========================================================== */
+
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+
+    background: rgba(0, 0, 0, .45);
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    z-index: 9999;
+
+    animation: fadeIn .2s ease-in-out;
+}
+
+/* ==========================================================
+   MODAL
+========================================================== */
+
+.modal {
+    width: 95%;
+    max-width: 550px;
+
+    background: #ffffff;
+
+    border-radius: 14px;
+
+    padding: 25px;
+
+    box-shadow: 0 15px 40px rgba(0, 0, 0, .25);
+
+    animation: zoomIn .2s ease;
+}
+
+.modal h2 {
+    margin-bottom: 20px;
+    color: #1f2937;
+    font-size: 24px;
+    font-weight: 700;
+}
+
+/* ==========================================================
+   FORM
+========================================================== */
+
+.modal form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.modal label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 5px;
+}
+
+.modal input,
+.modal select,
+.modal textarea {
+    width: 100%;
+
+    padding: 12px 14px;
+
+    border: 1px solid #d1d5db;
+
+    border-radius: 10px;
+
+    font-size: 15px;
+
+    transition: .2s;
+}
+
+.modal textarea {
+    resize: vertical;
+    min-height: 90px;
+}
+
+.modal input:focus,
+.modal select:focus,
+.modal textarea:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, .15);
+}
+
+/* ==========================================================
+   GRID
+========================================================== */
+
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+/* ==========================================================
+   BUTTON
+========================================================== */
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+
+    margin-top: 10px;
+}
+
+.modal-footer button {
+    border: none;
+    border-radius: 10px;
+    padding: 11px 20px;
+    font-size: 15px;
+    cursor: pointer;
+    transition: .2s;
+}
+
+.modal-footer button:first-child {
+    background: #e5e7eb;
+    color: #111827;
+}
+
+.modal-footer button:first-child:hover {
+    background: #d1d5db;
+}
+
+.modal-footer .btn-primary {
+    background: #2563eb;
+    color: white;
+}
+
+.modal-footer .btn-primary:hover {
+    background: #1d4ed8;
+}
+
+.modal-footer .btn-primary:disabled {
+    background: #93c5fd;
+    cursor: not-allowed;
+}
+
+/* ==========================================================
+   ANIMATION
+========================================================== */
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes zoomIn {
+    from {
+        transform: scale(.9);
+        opacity: 0;
+    }
+
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* ==========================================================
+   RESPONSIVE
+========================================================== */
+
+@media (max-width: 768px) {
+
+    .modal {
+        width: 95%;
+        padding: 20px;
+    }
+
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .modal-footer {
+        flex-direction: column;
+    }
+
+    .modal-footer button {
+        width: 100%;
+    }
+
+}
