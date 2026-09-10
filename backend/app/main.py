@@ -76,7 +76,8 @@ app = FastAPI(
     version="1.0.0",
     debug=True,
 )
-
+import os
+os.makedirs("uploads", exist_ok=True)
 app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
 
 
