@@ -78,10 +78,12 @@ app = FastAPI(
 )
 from fastapi import Request
 
-@app.get("/debug-auth")
+@app.get("/api/v1/debug-auth")
 async def debug_auth(request: Request):
     return {
-        "authorization": request.headers.get("authorization"),
+        "authorization_present": bool(
+            request.headers.get("authorization")
+        ),
         "host": request.headers.get("host"),
     }
 import os
