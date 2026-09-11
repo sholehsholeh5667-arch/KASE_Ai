@@ -303,6 +303,7 @@ async def upload_foto(
     try:
         db.commit()
         db.refresh(barang)
+        return barang
 
     except Exception as exc:
         db.rollback()
