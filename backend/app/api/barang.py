@@ -9,8 +9,9 @@ from fastapi import (
 
 from sqlalchemy.orm import Session
 
-from pathlib import Path
 import uuid
+import cloudinary
+import cloudinary.uploader
 
 from app.api.dependencies import require_permission
 from app.core.database import get_db
@@ -265,45 +266,31 @@ async def upload_foto(
         )
 
     # -----------------------------------------
-    # Folder penyimpanan
-    # -----------------------------------------
-
-    upload_dir = Path("uploads") / "barang"
-
-    upload_dir.mkdir(
-        parents=True,
-        exist_ok=True,
-    )
-
-    # -----------------------------------------
-    # Nama file aman menggunakan UUID
-    # -----------------------------------------
-
-    extension = allowed_types[file.content_type]
-
-    filename = (
-        f"barang_{barang_id}_"
-        f"{uuid.uuid4().hex}"
-        f"{extension}"
-    )
-
-    file_path = upload_dir / filename
-
-    # -----------------------------------------
-    # Simpan file baru
+    # Upload ke Cloudinary
     # -----------------------------------------
 
     try:
-        file_path.write_bytes(content)
-    except OSError as exc:
-        raise HTTPException(
-            status_code=500,
-            detail="Gagal menyimpan file foto.",
-        ) from exc
+        result = cloudinary.uploader.upload(
+         content,
+         folder="kasir_ai/barang",
+         public_id=f"barang_{barang_id}_{uuid.uuid4().hex}",
+         resource_type="image",
+        )
 
-    # Path relatif yang disimpan ke database
-    new_photo_path = str(file_path).replace("\\", "/")
+    except Exception as exc:
+     raise HTTPException(
+        status_code=500,
+        detail="Gagal mengunggah foto ke Cloudinary.",
+    ) from exc
 
+    # URL foto Cloudinary yang disimpan ke database
+    new_photo_path = result.get("secure_url")
+
+    if not new_photo_path:
+         raise HTTPException(
+         status_code=500,
+         detail="URL foto dari Cloudinary tidak ditemukan.",
+        )
     # Foto lama
     old_photo = barang.foto
 
@@ -320,47 +307,10 @@ async def upload_foto(
     except Exception as exc:
         db.rollback()
 
-        # Database gagal → hapus file baru
-        try:
-            if file_path.exists():
-                file_path.unlink()
-        except OSError:
-            pass
-
         raise HTTPException(
             status_code=500,
             detail="Gagal menyimpan informasi foto ke database.",
         ) from exc
-
-    # -----------------------------------------
-    # Database sudah berhasil.
-    # Sekarang baru hapus foto lama.
-    # -----------------------------------------
-
-    if old_photo:
-        old_path = Path(old_photo)
-
-        # Hanya boleh menghapus file di
-        # uploads/barang
-        try:
-            upload_root = (
-                Path("uploads")
-                / "barang"
-            ).resolve()
-
-            resolved_old = old_path.resolve()
-
-            if (
-                resolved_old != upload_root
-                and upload_root in resolved_old.parents
-                and resolved_old.exists()
-            ):
-                resolved_old.unlink()
-
-        except OSError:
-            pass
-
-    return barang
 # =========================================================
 # HAPUS BARANG
 # =========================================================
