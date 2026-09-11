@@ -1,3 +1,4 @@
+from sqlalchemy.engine import URL
 from pathlib import Path
 
 from sqlalchemy import create_engine, text
@@ -6,7 +7,15 @@ from sqlalchemy.orm import sessionmaker, DeclarativeBase
 from app.core.config import settings
 
 
-DATABASE_URL = settings.DATABASE_URL
+DATABASE_URL = URL.create(
+    drivername="mysql+pymysql",
+    username=settings.DB_USER,
+    password=settings.DB_PASSWORD,
+    host=settings.DB_HOST,
+    port=settings.DB_PORT,
+    database=settings.DB_NAME,
+)
+
 
 
 # ==========================================================

@@ -282,3 +282,137 @@ ROLE_PERMISSIONS = {
         "kitab.explain",
     ],
 }
+def seed_rbac():
+    db = SessionLocal()
+
+    try:
+        # ==============================
+        # 1. BUAT ROLE
+        # ==============================
+        role_names = {
+            "owner": "Owner",
+            "admin": "Administrator",
+            "kasir": "Kasir",
+            "gudang": "Gudang",
+            "akuntan": "Akuntan",
+        }
+
+        for kode, nama in role_names.items():
+            role = (
+                db.query(Role)
+                .filter(Role.kode == kode)
+                .first()
+            )
+
+            if not role:
+                role = Role(
+                    kode=kode,
+                    nama=nama,
+                    aktif=True,
+                )
+                db.add(role)
+
+        db.commit()
+
+        # ==============================
+        # 2. AMBIL SEMUA PERMISSION
+        # ==============================
+        permissions = db.query(Permission).all()
+
+        permission_map = {
+            p.kode: p
+            for p in permissions
+        }
+
+        # ==============================
+        # 3. VALIDASI PERMISSION
+        # ==============================
+        semua_permission = {
+            permission
+            for permission_list in ROLE_PERMISSIONS.values()
+            for permission in permission_list
+        }
+
+        missing = sorted(
+            semua_permission - set(permission_map.keys())
+        )
+
+        if missing:
+            raise RuntimeError(
+                "Permission belum tersedia di database:\n"
+                + "\n".join(missing)
+            )
+
+        # ==============================
+        # 4. HUBUNGKAN ROLE -> PERMISSION
+        # ==============================
+        for role_code, permission_codes in ROLE_PERMISSIONS.items():
+
+            role = (
+                db.query(Role)
+                .filter(Role.kode == role_code)
+                .first()
+            )
+
+            if not role:
+                raise RuntimeError(
+                    f"Role tidak ditemukan: {role_code}"
+                )
+
+            for permission_code in permission_codes:
+
+                permission = permission_map[permission_code]
+
+                existing = (
+                    db.query(RolePermission)
+                    .filter(
+                        RolePermission.role_id == role.id,
+                        RolePermission.permission_id == permission.id,
+                    )
+                    .first()
+                )
+
+                if not existing:
+                    db.add(
+                        RolePermission(
+                            role_id=role.id,
+                            permission_id=permission.id,
+                            aktif=True,
+                        )
+                    )
+                elif not existing.aktif:
+                    existing.aktif = True
+
+        db.commit()
+
+        print("=" * 60)
+        print("RBAC SEED BERHASIL")
+        print("=" * 60)
+
+        print(
+            "ROLES:",
+            db.query(Role).count()
+        )
+
+        print(
+            "PERMISSIONS:",
+            db.query(Permission).count()
+        )
+
+        print(
+            "ROLE_PERMISSIONS:",
+            db.query(RolePermission).count()
+        )
+
+        print("=" * 60)
+
+    except Exception:
+        db.rollback()
+        raise
+
+    finally:
+        db.close()
+
+
+if __name__ == "__main__":
+    seed_rbac()
