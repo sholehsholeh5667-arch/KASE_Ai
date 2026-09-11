@@ -76,6 +76,14 @@ app = FastAPI(
     version="1.0.0",
     debug=True,
 )
+from fastapi import Request
+
+@app.get("/debug-auth")
+async def debug_auth(request: Request):
+    return {
+        "authorization": request.headers.get("authorization"),
+        "host": request.headers.get("host"),
+    }
 import os
 
 UPLOAD_DIR = "/tmp/uploads"
