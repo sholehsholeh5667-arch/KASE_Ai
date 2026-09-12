@@ -460,8 +460,7 @@ export default function Pembelian() {
   // CETAK FAKTUR TERAKHIR
   // ========================================================
 
-  const cetakFakturTerakhir =
-    () => {
+  const cetakFakturTerakhir = async () => {
 
       if (
         permissionLoading ||
@@ -520,14 +519,29 @@ export default function Pembelian() {
       // BUKA PREVIEW DI TAB BARU
       // ==================================================
 
+      const token = localStorage.getItem("access_token");
+
+      const response = await fetch(url, {
+          method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        const error = await response.text();
+        throw new Error(error);
+      }
+
+      const blob = await response.blob();
+      const blobUrl = URL.createObjectURL(blob);
+
       window.open(
-        url,
+        blobUrl,
         "_blank",
         "noopener,noreferrer"
       );
     };
-
-
   // ========================================================
   // RESET FORM
   // ========================================================
