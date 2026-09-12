@@ -8,7 +8,7 @@ const api = axios.create({
 api.interceptors.request.use(
   (config) => {
     if (config.data instanceof FormData) {
-     delete config.headers["Content-Type"];
+     config.headers.delete("Content-Type");
     }
 
     let token =
