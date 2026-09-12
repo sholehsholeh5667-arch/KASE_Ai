@@ -55,16 +55,28 @@ export const barangService = {
   // =====================================
 
   async create(
-    payload: Partial<Barang>,
-  ): Promise<Barang> {
+   payload: Partial<Barang>,
+ ): Promise<Barang> {
+  const token = localStorage.getItem("access_token");
 
-    const { data } =
-      await api.post<Barang>(
-        "/barang/",
-        payload,
-      );
+  const response = await fetch(
+    `${import.meta.env.VITE_API_URL}/api/v1/barang/`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(payload),
+    },
+  );
 
-    return data;
+  if (!response.ok) {
+    const error = await response.text();
+    throw new Error(error);
+  }
+
+   return response.json();
   },
 
 
