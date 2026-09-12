@@ -519,30 +519,30 @@ export default function Pembelian() {
       // BUKA PREVIEW DI TAB BARU
       // ==================================================
 
-      const token = localStorage.getItem("access_token");
+      const token =
+        localStorage.getItem("access_token")
+          ?.replace(/^Bearer\s+/i, "")
+          .trim();
 
       const response = await fetch(url, {
           method: "GET",
         headers: {
-          Authorization: `Bearer ${token}`,
+         Authorization: `Bearer ${token}`,
         },
       });
 
       if (!response.ok) {
-        const error = await response.text();
-        throw new Error(error);
-      }
+            const error = await response.text();
+            throw new Error(error);
+          }
 
       const blob = await response.blob();
       const blobUrl = URL.createObjectURL(blob);
 
-      window.open(
-        blobUrl,
-        "_blank",
-        "noopener,noreferrer"
-      );
-    };
-  // ========================================================
+      window.open(blobUrl, "_blank", "noopener,noreferrer");
+      };
+
+   // ========================================================
   // RESET FORM
   // ========================================================
 
