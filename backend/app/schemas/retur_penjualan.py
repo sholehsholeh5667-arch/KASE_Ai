@@ -94,7 +94,7 @@ class ReturPenjualanResponse(BaseModel):
 
     penjualan_id: int
 
-    pelanggan_id: int
+    pelanggan_id: Optional[int] = None
 
     created_by: int
 
