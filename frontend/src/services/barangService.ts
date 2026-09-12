@@ -91,22 +91,32 @@ export const barangService = {
   // =====================================
 
   async uploadFoto(
-    id: number,
-    file: File,
-  ): Promise<Barang> {
+  id: number,
+  file: File,
+): Promise<Barang> {
+  const formData = new FormData();
+  formData.append("file", file);
 
-    const formData = new FormData();
+  const token = localStorage.getItem("access_token");
 
-    formData.append("file", file);
+  const response = await fetch(
+    `${import.meta.env.VITE_API_URL}/api/v1/barang/${id}/foto`,
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: formData,
+    },
+  );
 
-    const { data } =
-      await api.post<Barang>(
-        `/barang/${id}/foto`,
-        formData,
-      );
+  if (!response.ok) {
+    const error = await response.text();
+    throw new Error(error);
+  }
 
-    return data;
-  },
+  return response.json();
+},
   // =====================================
   // HAPUS BARANG
   // =====================================
