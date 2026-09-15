@@ -20,6 +20,7 @@ import {
 } from "@mui/material";
 
 import { useState } from "react";
+import useMediaQuery from "@mui/material/useMediaQuery";
 
 import { useReturPenjualan } from "../hooks/useReturPenjualan";
 
@@ -51,6 +52,7 @@ type ReturPenjualanWithReason =
   };
 
 export default function ReturPenjualan() {
+  const isMobile = useMediaQuery("(max-width:600px)");
 
   // =====================================
   // PERMISSION
@@ -815,11 +817,15 @@ const simpanRetur = async () => {
     <Divider sx={{ my: 3 }} />
 
     <Box
-      display="flex"
-      justifyContent="space-between"
-      alignItems="center"
-      mb={2}
-    >
+      sx={{
+      display: "flex",
+      flexDirection: { xs: "column", sm: "row" },
+      justifyContent: "space-between",
+      alignItems: { xs: "stretch", sm: "center" },
+      gap: 1.5,
+      mb: 2,
+    }}
+  >
 
       <TextField
         label="Cari Retur"
@@ -828,8 +834,8 @@ const simpanRetur = async () => {
           setSearch(e.target.value)
         }
         sx={{
-          width: 350,
-        }}
+           width: { xs: "100%", sm: 350 },
+          }}
       />
 
       {canCreate && (
@@ -1097,8 +1103,94 @@ const simpanRetur = async () => {
     >
       Total data: {total}
     </Typography>
+  {isMobile && (
+  <Box sx={{ mt: 2 }}>
+    {loading && (
+      <Box sx={{ textAlign: "center", py: 3 }}>
+        <CircularProgress />
+      </Box>
+    )}
 
-    <Table sx={{ mt: 2 }}>
+    {!loading && data.length === 0 && (
+      <Paper
+        variant="outlined"
+        sx={{
+          p: 2,
+          textAlign: "center",
+          borderRadius: 2,
+        }}
+      >
+        Belum ada data retur.
+      </Paper>
+    )}
+
+    {!loading &&
+      data.map((item) => (
+        <Paper
+          key={item.id}
+          variant="outlined"
+          sx={{
+            p: 2,
+            mb: 1.5,
+            borderRadius: 2,
+          }}
+        >
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              gap: 1,
+              mb: 1,
+            }}
+          >
+            <Typography fontWeight="bold">
+              {item.no_retur}
+            </Typography>
+
+            <Typography
+              variant="body2"
+              color="text.secondary"
+            >
+              {item.tanggal}
+            </Typography>
+          </Box>
+
+          <Typography variant="body2">
+            Penjualan: {item.penjualan_id}
+          </Typography>
+
+          <Typography variant="body2">
+            Status: {item.status}
+          </Typography>
+
+          <Typography
+            sx={{
+              mt: 1,
+              fontWeight: "bold",
+            }}
+          >
+            Total: Rp{" "}
+            {Number(item.total).toLocaleString("id-ID")}
+          </Typography>
+        </Paper>
+      ))}
+  </Box>
+)}
+    
+    <Box
+  sx={{
+    mt: 2,
+    width: "100%",
+    overflowX: "auto",
+    display: isMobile ? "none" : "block",
+  }}
+>
+  <Table
+    sx={{
+      minWidth: 720,
+      whiteSpace: "nowrap",
+    }}
+  >
 
       <TableHead>
 
@@ -1318,6 +1410,8 @@ const simpanRetur = async () => {
       </TableBody>
 
     </Table>
+
+    </Box>
 
   </Paper>
 
