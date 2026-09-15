@@ -1,4 +1,5 @@
 import {
+  Menu,
   Bell,
   UserCircle,
 } from "lucide-react";
@@ -21,13 +22,20 @@ export default function Navbar() {
     });
   };
 
+  const handleMenu = () => {
+    window.dispatchEvent(
+      new CustomEvent("toggle-mobile-sidebar")
+    );
+  };
+
   return (
     <header
       className="
         fixed
         top-0
         right-0
-        left-[260px]
+        left-0
+        md:left-[260px]
         z-50
         h-[72px]
         bg-gradient-to-r
@@ -37,18 +45,32 @@ export default function Navbar() {
         shadow-lg
         flex
         items-center
-        px-6
+        px-4
         md:px-8
       "
     >
-      {/* ==================================================
-          BRANDING
-      ================================================== */}
-
+      {/* AREA BRANDING */}
       <div className="flex flex-1 items-center gap-3">
 
-        {/* LOGO */}
+        {/* TOMBOL MENU HP */}
+        <div className="md:hidden">
+          <button
+            type="button"
+            onClick={handleMenu}
+            className="
+              mr-1
+              rounded-lg
+              p-2
+              text-white
+              hover:bg-white/10
+            "
+            aria-label="Buka menu"
+          >
+            <Menu size={24} />
+          </button>
+        </div>
 
+        {/* LOGO */}
         <div
           className="
             flex
@@ -70,7 +92,6 @@ export default function Navbar() {
         </div>
 
         {/* NAMA APLIKASI */}
-
         <div className="leading-tight">
           <div
             className="
@@ -93,18 +114,12 @@ export default function Navbar() {
             Kasir AI Syari'ah Entrepreneur
           </div>
         </div>
-
       </div>
 
-
-      {/* ==================================================
-          USER AREA
-      ================================================== */}
-
-      <div className="flex items-center gap-4">
+      {/* USER AREA */}
+      <div className="flex items-center gap-2 md:gap-4">
 
         {/* NOTIFIKASI */}
-
         <button
           type="button"
           title="Notifikasi"
@@ -133,18 +148,14 @@ export default function Navbar() {
           />
         </button>
 
-
         {/* USER */}
-
         <div className="hidden items-center gap-2 sm:flex">
-
           <UserCircle
             size={34}
             className="text-white"
           />
 
           <div className="leading-tight">
-
             <div
               className="
                 text-sm
@@ -163,14 +174,10 @@ export default function Navbar() {
             >
               Pengguna
             </div>
-
           </div>
-
         </div>
 
-
         {/* LOGOUT */}
-
         <button
           type="button"
           onClick={handleLogout}
@@ -178,8 +185,9 @@ export default function Navbar() {
             rounded-lg
             border
             border-white/20
-            px-4
+            px-3
             py-2
+            md:px-4
             text-sm
             font-semibold
             text-white
@@ -190,9 +198,7 @@ export default function Navbar() {
         >
           Logout
         </button>
-
       </div>
-
     </header>
   );
 }

@@ -19,7 +19,7 @@ export default function DashboardLayout({
           AREA UTAMA
       ================================================== */}
 
-      <div className="ml-[260px] min-h-screen">
+      <div className="ml-0 md:ml-[260px] min-h-screen">
 
         {/* ==================================================
             NAVBAR
@@ -31,7 +31,7 @@ export default function DashboardLayout({
             CONTENT
         ================================================== */}
 
-        <main className="pt-[88px] px-6 md:px-8 pb-8">
+        <main className="pt-[88px] px-3 sm:px-4 md:px-8 pb-8">
           <div className="mx-auto w-full max-w-[1600px]">
             {children}
           </div>

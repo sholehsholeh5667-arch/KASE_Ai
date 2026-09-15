@@ -53,3 +53,5 @@ from app.models.settings import Settings
 from app.models.toko import Toko
 
 from app.models.toko_user import TokoUser
+
+from app.models.notification import Notification

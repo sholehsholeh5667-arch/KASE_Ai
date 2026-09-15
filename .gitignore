@@ -71,3 +71,4 @@ backend/uploads/*
 12.0.2
 assert
 python
+.vercel

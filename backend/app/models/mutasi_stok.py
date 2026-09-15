@@ -13,6 +13,8 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 
 from app.core.database import Base
+from datetime import datetime
+from zoneinfo import ZoneInfo
 
 
 class MutasiStok(Base):
@@ -27,7 +29,7 @@ class MutasiStok(Base):
 
     tanggal = Column(
         DateTime,
-        server_default=func.now(),
+        default=lambda ctx: datetime.now(ZoneInfo("Asia/Jakarta")).replace(tzinfo=None),
         nullable=False,
     )
 

@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from app.api.permissions import router as permissions_router
+from app.api import notifications
 
 # ==========================================================
 # DATABASE
@@ -526,5 +527,10 @@ app.include_router(
 
 app.include_router(
     permissions_router,
+    prefix="/api/v1",
+)
+
+app.include_router(
+    notifications.router,
     prefix="/api/v1",
 )

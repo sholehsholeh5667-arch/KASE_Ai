@@ -26,7 +26,7 @@ class Settings(BaseSettings):
 
     RESET_PASSWORD_EXPIRE_MINUTES: int = 30
 
-    FRONTEND_URL: str = "http://localhost:5173"
+    FRONTEND_URL: str = "https://kase-ai-erf6.vercel.app"
 
     model_config = SettingsConfigDict(
         env_file=".env",

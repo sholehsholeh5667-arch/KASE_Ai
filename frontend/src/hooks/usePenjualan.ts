@@ -732,6 +732,8 @@ export function usePenjualan() {
          * Backend mengembalikan data
          * Penjualan termasuk nomor faktur.
          */
+        console.log("KERANJANG SAAT SIMPAN:", keranjang);
+        console.log("PAYLOAD PENJUALAN:", payload);
         const hasil =
           await createPenjualan(
             payload

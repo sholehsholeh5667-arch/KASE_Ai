@@ -1,3 +1,7 @@
+import { useEffect, useState } from "react";
+import { getNotifications } from "../../services/notificationService";
+import type { NotificationItem } from "../../services/notificationService";
+
 import {
   AppBar,
   Toolbar,
@@ -6,9 +10,12 @@ import {
   Box,
   IconButton,
   Tooltip,
+  Badge,
+  Menu,
 } from "@mui/material";
 
 import {
+  Menu as MenuIcon,
   NotificationsNone,
   AccountCircle,
 } from "@mui/icons-material";
@@ -17,6 +24,18 @@ import { useNavigate } from "react-router-dom";
 
 export default function Header() {
   const navigate = useNavigate();
+const [notifications, setNotifications] = useState<NotificationItem[]>([]);
+const [notificationAnchor, setNotificationAnchor] =
+  useState<null | HTMLElement>(null);
+useEffect(() => {
+  getNotifications()
+    .then((data) => {
+      setNotifications(data);
+    })
+    .catch((error) => {
+      console.error("GAGAL MEMUAT NOTIFIKASI:", error);
+    });
+    }, []);
 
   const username =
     localStorage.getItem("username") ||
@@ -77,6 +96,21 @@ export default function Header() {
             minWidth: 0,
           }}
         >
+        <IconButton
+         onClick={() =>
+          window.dispatchEvent(
+            new CustomEvent("toggle-mobile-sidebar")
+          )
+      }
+       sx={{
+         display: { xs: "inline-flex", md: "none" },
+          color: "#ffffff",
+            mr: 1,
+        }}
+        aria-label="Buka menu"
+      >
+        <MenuIcon />
+      </IconButton>
 
           {/* LOGO K */}
 
@@ -191,7 +225,10 @@ export default function Header() {
           <Tooltip title="Notifikasi">
 
             <IconButton
-              size="large"
+               size="large"
+                onClick={(event) => {
+                 setNotificationAnchor(event.currentTarget);
+                }}
               sx={{
                 color: "#ffffff",
 
@@ -203,12 +240,41 @@ export default function Header() {
                 },
               }}
             >
-              <NotificationsNone />
+              <Badge badgeContent={notifications.filter((n) => !n.dibaca).length} color="error">
+                <NotificationsNone />
+                   </Badge>
             </IconButton>
 
           </Tooltip>
+          <Menu
+  anchorEl={notificationAnchor}
+  open={Boolean(notificationAnchor)}
+  onClose={() => setNotificationAnchor(null)}
+>
+  <Box sx={{ p: 2, minWidth: 320 }}>
+    <Typography variant="h6">
+      Notifikasi
+    </Typography>
 
+    {notifications.length === 0 ? (
+      <Typography variant="body2" sx={{ mt: 1 }}>
+        Tidak ada notifikasi
+      </Typography>
+    ) : (
+      notifications.map((notification) => (
+        <Box key={notification.id} sx={{ mt: 1 }}>
+          <Typography fontWeight="bold">
+            {notification.judul}
+          </Typography>
 
+          <Typography variant="body2">
+            {notification.pesan}
+          </Typography>
+        </Box>
+      ))
+    )}
+  </Box>
+</Menu>
           {/* USER */}
 
           <Box

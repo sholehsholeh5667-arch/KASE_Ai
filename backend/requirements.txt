@@ -45,3 +45,4 @@ email-validator
 python-multipart
 openai
 cloudinary
+tzdata

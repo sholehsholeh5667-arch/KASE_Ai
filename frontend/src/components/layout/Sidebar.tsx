@@ -38,6 +38,7 @@ import {
 import { usePermissions } from "../../hooks/usePermissions";
 import { userService } from "../../services/userService";
 import type { UserRole } from "../../types/user";
+import { useTheme, useMediaQuery } from "@mui/material";
 
 
 /* ==========================================================
@@ -72,7 +73,22 @@ export default function Sidebar() {
 
   const location =
     useLocation();
+  const theme = useTheme();
 
+const isMobile = useMediaQuery(
+  theme.breakpoints.down("md")
+);
+
+const [mobileOpen, setMobileOpen] = useState(false);
+useEffect(() => {
+  const openMenu = () => setMobileOpen(true);
+
+  window.addEventListener("toggle-mobile-sidebar", openMenu);
+
+  return () => {
+    window.removeEventListener("toggle-mobile-sidebar", openMenu);
+  };
+}, []);
 
   /* ========================================================
      PERMISSION USER LOGIN
@@ -410,7 +426,9 @@ export default function Sidebar() {
 
   return (
     <Drawer
-      variant="permanent"
+      variant={isMobile ? "temporary" : "permanent"}
+      open={isMobile ? mobileOpen : true}
+      onClose={() => setMobileOpen(false)}
 
       sx={{
         width:

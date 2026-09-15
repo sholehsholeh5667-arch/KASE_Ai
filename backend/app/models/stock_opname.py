@@ -20,7 +20,8 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 
 from app.core.database import Base
-
+from datetime import datetime
+from zoneinfo import ZoneInfo
 
 # ==========================================================
 # STATUS OPNAME
@@ -62,8 +63,8 @@ class StockOpname(Base):
 
     tanggal = Column(
         DateTime,
-        server_default=func.now(),
-        nullable=False
+        default=lambda ctx: datetime.now(ZoneInfo("Asia/Jakarta")).replace(tzinfo=None),
+        nullable=False,
     )
 
     status = Column(
