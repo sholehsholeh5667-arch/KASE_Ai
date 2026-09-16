@@ -14,16 +14,20 @@ import {
   Table,
   TableBody,
   TableCell,
+  TableContainer,
   TableHead,
   TableRow,
   TextField,
   Typography,
+  Chip,
+  IconButton,
 } from "@mui/material";
 
 import AddIcon from "@mui/icons-material/Add";
 import SaveIcon from "@mui/icons-material/Save";
 import DeleteIcon from "@mui/icons-material/Delete";
 import RestartAltIcon from "@mui/icons-material/RestartAlt";
+import VisibilityIcon from "@mui/icons-material/Visibility";
 
 import { useStockOpname } from "../hooks/useStockOpname";
 import CariBarangDialog from "../components/stockOpname/CariBarangDialog";
@@ -36,574 +40,634 @@ type OpnameItem = {
 };
 
 export default function StockOpname() {
-
   const {
-      create,
-      loadData,
-      data,
-      loading,
-    } = useStockOpname();
+    create,
+    loadData,
+    data,
+    loading,
+  } = useStockOpname();
 
-  const [catatan, setCatatan] =
-    useState("");
+  const [catatan, setCatatan] = useState("");
+  const [daftarBarang, setDaftarBarang] = useState<OpnameItem[]>([]);
+  const [bukaDialogBarang, setBukaDialogBarang] = useState(false);
+  const [detailOpname, setDetailOpname] = useState<any | null>(null);
+  const [menyimpan, setMenyimpan] = useState(false);
 
-  const [daftarBarang, setDaftarBarang] =
-    useState<OpnameItem[]>([]);
+  // ======================================================
+  // RESET FORM
+  // ======================================================
 
-  const [bukaDialogBarang, setBukaDialogBarang] =
-    useState(false);
+  const resetForm = useCallback((): void => {
+    setDaftarBarang([]);
+    setCatatan("");
+  }, []);
 
-    // ======================================================
-// RESET FORM
-// ======================================================
+  // ======================================================
+  // PILIH BARANG
+  // ======================================================
 
-const resetForm = useCallback((): void => {
+  const pilihBarang = useCallback(
+    (barang: Barang) => {
+      const sudahAda = daftarBarang.find(
+        (item) => item.barang.id === barang.id
+      );
 
-  setDaftarBarang([]);
+      if (sudahAda) {
+        alert("Barang sudah dipilih.");
+        return;
+      }
 
-  setCatatan("");
+      setDaftarBarang((old) => [
+        ...old,
+        {
+          barang,
+          stok_fisik: Math.max(0, Number(barang.stok ?? 0)),
+          keterangan: "",
+        },
+      ]);
 
-}, []);
+      setBukaDialogBarang(false);
+    },
+    [daftarBarang]
+  );
 
+  // ======================================================
+  // HITUNG SELISIH
+  // ======================================================
 
-// ======================================================
-// PILIH BARANG
-// ======================================================
+  const hitungSelisih = useCallback(
+    (item: OpnameItem): number => {
+      return item.stok_fisik - Number(item.barang.stok ?? 0);
+    },
+    []
+  );
 
-const pilihBarang = useCallback(
-  (barang: Barang) => {
+  // ======================================================
+  // UBAH STOK FISIK
+  // ======================================================
 
-    const sudahAda = daftarBarang.find(
+  const ubahStokFisik = useCallback(
+    (barangId: number, stok: number) => {
+      const nilai = Number.isFinite(stok) ? Math.max(0, stok) : 0;
 
-      (item) =>
+      setDaftarBarang((old) =>
+        old.map((item) =>
+          item.barang.id === barangId
+            ? {
+                ...item,
+                stok_fisik: nilai,
+              }
+            : item
+        )
+      );
+    },
+    []
+  );
 
-        item.barang.id === barang.id
+  // ======================================================
+  // UBAH KETERANGAN
+  // ======================================================
 
+  const ubahKeterangan = useCallback(
+    (barangId: number, keterangan: string) => {
+      setDaftarBarang((old) =>
+        old.map((item) =>
+          item.barang.id === barangId
+            ? {
+                ...item,
+                keterangan,
+              }
+            : item
+        )
+      );
+    },
+    []
+  );
+
+  // ======================================================
+  // HAPUS BARANG
+  // ======================================================
+
+  const hapusBarang = useCallback((barangId: number) => {
+    setDaftarBarang((old) =>
+      old.filter((item) => item.barang.id !== barangId)
     );
-    if (sudahAda) {
+  }, []);
 
-      alert("Barang sudah dipilih.");
+  // ======================================================
+  // TOTAL SELISIH
+  // ======================================================
 
+  const totalSelisih = daftarBarang.reduce(
+    (total, item) => total + hitungSelisih(item),
+    0
+  );
+
+  // ======================================================
+  // SIMPAN STOCK OPNAME
+  // ======================================================
+
+  const simpanStockOpname = async () => {
+    if (daftarBarang.length === 0) {
+      alert("Belum ada barang. Silakan tambah barang terlebih dahulu.");
       return;
-
     }
 
-    setDaftarBarang((old) => [
-
-      ...old,
-
-      {
-
-        barang,
-
-        stok_fisik: barang.stok,
-
-        keterangan: "",
-
-      },
-
-    ]);
-
-    setBukaDialogBarang(false);
-
-  },
-
-  [daftarBarang]
-
-);
-
-
-// ======================================================
-// HITUNG SELISIH
-// ======================================================
-
-const hitungSelisih = useCallback(
-
-  (item: OpnameItem): number => {
-
-    return item.stok_fisik - item.barang.stok
-
-  },
-
-  []
-
-);
-
-
-// ======================================================
-// UBAH STOK FISIK
-// ======================================================
-
-const ubahStokFisik = useCallback(
-
-  (
-
-    barangId: number,
-
-    stok: number
-
-  ) => {
-
-    setDaftarBarang((old) =>
-
-      old.map((item) =>
-
-        item.barang.id === barangId
-
-          ? {
-
-              ...item,
-
-              stok_fisik: stok,
-
-            }
-
-          : item
-
-      )
-
-    );
-
-  },
-
-  []
-
-);
-
-
-// ======================================================
-// UBAH KETERANGAN
-// ======================================================
-
-const ubahKeterangan = useCallback(
-
-  (
-
-    barangId: number,
-
-    keterangan: string
-
-  ) => {
-
-    setDaftarBarang((old) =>
-
-      old.map((item) =>
-
-        item.barang.id === barangId
-
-          ? {
-
-              ...item,
-
-              keterangan,
-
-            }
-
-          : item
-
-      )
-
-    );
-
-  },
-
-  []
-
-);
-
-
-// ======================================================
-// HAPUS BARANG
-// ======================================================
-
-const hapusBarang = useCallback(
-
-  (barangId: number) => {
-
-    setDaftarBarang((old) =>
-
-      old.filter(
-
-        (item) =>
-
-          item.barang.id !== barangId
-
-      )
-
-    );
-
-  },
-
-  []
-
-);
-
-
-// ======================================================
-// SIMPAN STOCK OPNAME
-// ======================================================
-
-const simpanStockOpname = async () => {
-
-  if (daftarBarang.length === 0) {
-
-    alert("Belum ada barang.");
-
-    return;
-
-  }
-
-  await create({
-
-    nomor: "",
-
-    created_by: 1,
-
-    keterangan: catatan,
-
-    detail: daftarBarang.map((item) => ({
-
-      barang_id: item.barang.id,
-
-      stok_sistem: item.barang.stok,
-
-      stok_fisik: item.stok_fisik,
-
-      selisih: hitungSelisih(item),
-
-      keterangan: item.keterangan,
-
-    })),
-
-  });
-
-  alert("Stock Opname berhasil disimpan.");
-
-  resetForm();
-
-  loadData();
-
-};
-
-    return (
-  <Box p={3}>
-
-    <Typography
-      variant="h5"
-      fontWeight="bold"
-      mb={2}
+    try {
+      setMenyimpan(true);
+
+      await create({
+        nomor: "",
+        // Pertahankan kontrak backend saat ini.
+        // Sebaiknya nanti diganti dengan ID user login dari auth context.
+        created_by: 1,
+        keterangan: catatan.trim(),
+        detail: daftarBarang.map((item) => ({
+          barang_id: item.barang.id,
+          stok_sistem: Number(item.barang.stok ?? 0),
+          stok_fisik: item.stok_fisik,
+          selisih: hitungSelisih(item),
+          keterangan: item.keterangan.trim(),
+        })),
+      });
+
+      alert("Stock Opname berhasil disimpan.");
+      resetForm();
+      await loadData();
+    } catch (error) {
+      console.error("Gagal menyimpan Stock Opname:", error);
+      alert("Stock Opname gagal disimpan. Silakan cek koneksi/API.");
+    } finally {
+      setMenyimpan(false);
+    }
+  };
+
+  return (
+    <Box
+      sx={{
+        width: "100%",
+        maxWidth: "100%",
+        minWidth: 0,
+        boxSizing: "border-box",
+        p: { xs: 1.5, sm: 2, md: 3 },
+        overflowX: "hidden",
+      }}
     >
-      Stock Opname
-    </Typography>
+      <Typography
+        variant="h5"
+        fontWeight="bold"
+        mb={2}
+        sx={{ fontSize: { xs: "1.35rem", sm: "1.5rem" } }}
+      >
+        Stock Opname
+      </Typography>
 
-    <Card>
+      {/* ======================================================
+          FORM STOCK OPNAME
+      ====================================================== */}
 
-      <CardContent>
-
-        <Stack
-          direction="row"
-          spacing={2}
-          mb={3}
-        >
-
-          <Button
-            variant="contained"
-            startIcon={<AddIcon />}
-            onClick={() =>
-              setBukaDialogBarang(true)
-            }
+      <Card sx={{ width: "100%", boxSizing: "border-box" }}>
+        <CardContent sx={{ p: { xs: 1.5, sm: 2, md: 3 } }}>
+          <Stack
+            direction={{ xs: "column", sm: "row" }}
+            spacing={1.5}
+            mb={3}
+            sx={{ width: "100%" }}
           >
-            Tambah Barang
-          </Button>
-
-          <Button
-            variant="contained"
-            color="success"
-            startIcon={<SaveIcon />}
-            onClick={simpanStockOpname}
-          >
-            Simpan
-          </Button>
-
-          <Button
-            variant="outlined"
-            color="warning"
-            startIcon={<RestartAltIcon />}
-            onClick={resetForm}
-          >
-            Reset
-          </Button>
-
-        </Stack>
-
-        <Divider sx={{ mb: 3 }} />
-
-        <TextField
-          label="Catatan"
-          fullWidth
-          multiline
-          rows={2}
-          value={catatan}
-          onChange={(e) =>
-            setCatatan(e.target.value)
-          }
-        />
-
-      </CardContent>
-
-    </Card>
-
-    <Paper sx={{ mt: 3 }}>
-
-      <Table>
-
-        <TableHead>
-
-          <TableRow>
-
-            <TableCell>Kode</TableCell>
-
-            <TableCell>Nama Barang</TableCell>
-
-            <TableCell align="right">
-              Stok Sistem
-            </TableCell>
-
-            <TableCell align="right">
-              Stok Fisik
-            </TableCell>
-
-            <TableCell align="right">
-              Selisih
-            </TableCell>
-
-            <TableCell>
-              Keterangan
-            </TableCell>
-
-            <TableCell align="center">
-              Aksi
-            </TableCell>
-
-          </TableRow>
-
-        </TableHead>
-
-        <TableBody>
-
-          {daftarBarang.map((item) => (
-
-            <TableRow
-              key={item.barang.id}
+            <Button
+              fullWidth
+              variant="contained"
+              startIcon={<AddIcon />}
+              onClick={() => setBukaDialogBarang(true)}
+              sx={{ minHeight: 46 }}
             >
+              Tambah Barang
+            </Button>
 
-              <TableCell>
-                {item.barang.kode_barang}
-              </TableCell>
+            <Button
+              fullWidth
+              variant="contained"
+              color="success"
+              startIcon={<SaveIcon />}
+              onClick={simpanStockOpname}
+              disabled={menyimpan || daftarBarang.length === 0}
+              sx={{ minHeight: 46 }}
+            >
+              {menyimpan ? "Menyimpan..." : "Simpan"}
+            </Button>
 
-              <TableCell>
-                {item.barang.nama_barang}
-              </TableCell>
+            <Button
+              fullWidth
+              variant="outlined"
+              color="warning"
+              startIcon={<RestartAltIcon />}
+              onClick={resetForm}
+              disabled={menyimpan}
+              sx={{ minHeight: 46 }}
+            >
+              Reset
+            </Button>
+          </Stack>
 
-              <TableCell align="right">
-                {item.barang.stok}
-              </TableCell>
+          <Divider sx={{ mb: 2.5 }} />
 
-              <TableCell align="right">
+          <TextField
+            label="Catatan"
+            fullWidth
+            multiline
+            rows={2}
+            value={catatan}
+            onChange={(e) => setCatatan(e.target.value)}
+            placeholder="Contoh: Stock opname rak depan"
+          />
+        </CardContent>
+      </Card>
 
-                <TextField
-                  type="number"
-                  size="small"
-                  value={item.stok_fisik}
-                  onChange={(e) =>
-                    ubahStokFisik(
-                      item.barang.id,
-                      Number(e.target.value)
-                    )
-                  }
-                />
+      {/* ======================================================
+          DAFTAR BARANG
+      ====================================================== */}
 
-              </TableCell>
+      <Card sx={{ mt: 2, width: "100%", boxSizing: "border-box" }}>
+        <CardContent sx={{ p: { xs: 1, sm: 2 } }}>
+          <Stack
+            direction={{ xs: "column", sm: "row" }}
+            spacing={1}
+            justifyContent="space-between"
+            alignItems={{ xs: "flex-start", sm: "center" }}
+            mb={1.5}
+          >
+            <Typography variant="h6" fontWeight="bold">
+              Barang yang Dicek
+            </Typography>
 
-              <TableCell align="right">
+            <Chip
+              label={`Jumlah item: ${daftarBarang.length} • Selisih: ${totalSelisih}`}
+              size="small"
+              color={totalSelisih === 0 ? "success" : "warning"}
+              variant="outlined"
+            />
+          </Stack>
 
-                {hitungSelisih(item)}
+          <TableContainer
+            component={Paper}
+            variant="outlined"
+            sx={{
+              width: "100%",
+              maxWidth: "100%",
+              overflowX: "auto",
+            }}
+          >
+            <Table
+              size="small"
+              sx={{
+                minWidth: { xs: 760, sm: 900 },
+              }}
+            >
+              <TableHead>
+                <TableRow>
+                  <TableCell>Kode</TableCell>
+                  <TableCell sx={{ minWidth: 180 }}>
+                    Nama Barang
+                  </TableCell>
+                  <TableCell align="right">Stok Sistem</TableCell>
+                  <TableCell align="right">Stok Fisik</TableCell>
+                  <TableCell align="right">Selisih</TableCell>
+                  <TableCell sx={{ minWidth: 180 }}>
+                    Keterangan
+                  </TableCell>
+                  <TableCell align="center">Aksi</TableCell>
+                </TableRow>
+              </TableHead>
 
-              </TableCell>
+              <TableBody>
+                {daftarBarang.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={7} align="center">
+                      Belum ada barang.
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  daftarBarang.map((item) => {
+                    const selisih = hitungSelisih(item);
 
-              <TableCell>
+                    return (
+                      <TableRow key={item.barang.id}>
+                        <TableCell>
+                          {item.barang.kode_barang}
+                        </TableCell>
 
-                <TextField
-                  size="small"
-                  value={item.keterangan}
-                  onChange={(e) =>
-                    ubahKeterangan(
-                      item.barang.id,
-                      e.target.value
-                    )
-                  }
-                />
+                        <TableCell>
+                          {item.barang.nama_barang}
+                        </TableCell>
 
-              </TableCell>
+                        <TableCell align="right">
+                          {item.barang.stok}
+                        </TableCell>
 
-              <TableCell align="center">
+                        <TableCell align="right">
+                          <TextField
+                            type="number"
+                            size="small"
+                            value={item.stok_fisik}
+                            inputProps={{ min: 0, step: 1 }}
+                            onChange={(e) =>
+                              ubahStokFisik(
+                                item.barang.id,
+                                Number(e.target.value)
+                              )
+                            }
+                            sx={{ width: 105 }}
+                          />
+                        </TableCell>
 
-                <Button
-                  color="error"
-                  startIcon={<DeleteIcon />}
-                  onClick={() =>
-                    hapusBarang(
-                      item.barang.id
-                    )
-                  }
-                >
-                  Hapus
-                </Button>
+                        <TableCell align="right">
+                          <Chip
+                            size="small"
+                            label={selisih > 0 ? `+${selisih}` : selisih}
+                            color={
+                              selisih === 0
+                                ? "success"
+                                : selisih > 0
+                                  ? "info"
+                                  : "error"
+                            }
+                            variant="outlined"
+                          />
+                        </TableCell>
 
-              </TableCell>
+                        <TableCell>
+                          <TextField
+                            size="small"
+                            fullWidth
+                            value={item.keterangan}
+                            onChange={(e) =>
+                              ubahKeterangan(
+                                item.barang.id,
+                                e.target.value
+                              )
+                            }
+                            placeholder="Keterangan"
+                          />
+                        </TableCell>
 
-            </TableRow>
+                        <TableCell align="center">
+                          <Button
+                            size="small"
+                            color="error"
+                            startIcon={<DeleteIcon />}
+                            onClick={() =>
+                              hapusBarang(item.barang.id)
+                            }
+                          >
+                            Hapus
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })
+                )}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </CardContent>
+      </Card>
 
-          ))}
+      {/* ======================================================
+          RIWAYAT STOCK OPNAME
+      ====================================================== */}
 
-        </TableBody>
+      <Card sx={{ mt: 2, width: "100%", boxSizing: "border-box" }}>
+        <CardContent sx={{ p: { xs: 1, sm: 2 } }}>
+          <Typography variant="h6" fontWeight="bold" mb={1.5}>
+            Riwayat Stock Opname
+          </Typography>
 
-      </Table>
+          <Divider sx={{ mb: 2 }} />
 
-    </Paper>
-{/* ======================================================
-    RIWAYAT STOCK OPNAME
-====================================================== */}
+          <TableContainer
+            component={Paper}
+            variant="outlined"
+            sx={{
+              width: "100%",
+              maxWidth: "100%",
+              overflowX: "auto",
+            }}
+          >
+            <Table
+              size="small"
+              sx={{ minWidth: { xs: 720, sm: 900 } }}
+            >
+              <TableHead>
+                <TableRow>
+                  <TableCell>Nomor</TableCell>
+                  <TableCell>Tanggal</TableCell>
+                  <TableCell>Status</TableCell>
+                  <TableCell>Keterangan</TableCell>
+                  <TableCell align="center">
+                    Jumlah Item
+                  </TableCell>
+                  <TableCell align="center">Aksi</TableCell>
+                </TableRow>
+              </TableHead>
 
-<Card sx={{ mt: 3 }}>
-  <CardContent>
+              <TableBody>
+                {loading ? (
+                  <TableRow>
+                    <TableCell colSpan={6} align="center">
+                      Memuat riwayat...
+                    </TableCell>
+                  </TableRow>
+                ) : data.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={6} align="center">
+                      Belum ada riwayat Stock Opname.
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  data.map((opname) => (
+                    <TableRow key={opname.id}>
+                      <TableCell>{opname.nomor}</TableCell>
 
-    <Typography
-      variant="h6"
-      fontWeight="bold"
-      mb={2}
-    >
-      Riwayat Stock Opname
-    </Typography>
+                      <TableCell sx={{ whiteSpace: "nowrap" }}>
+                        {new Date(opname.tanggal).toLocaleString(
+                          "id-ID"
+                        )}
+                      </TableCell>
 
-    <Divider sx={{ mb: 2 }} />
+                      <TableCell>
+                        <Chip
+                          size="small"
+                          label={opname.status}
+                          color={
+                            opname.status === "DRAFT"
+                              ? "warning"
+                              : "success"
+                          }
+                          variant="outlined"
+                        />
+                      </TableCell>
 
-    <Paper variant="outlined">
+                      <TableCell>
+                        {opname.keterangan || "-"}
+                      </TableCell>
 
-      <Table>
+                      <TableCell align="center">
+                        {opname.detail?.length ?? 0}
+                      </TableCell>
 
-        <TableHead>
+                      <TableCell align="center">
+                        <IconButton
+                          size="small"
+                          color="primary"
+                          onClick={() => setDetailOpname(opname)}
+                          aria-label="Lihat detail"
+                        >
+                          <VisibilityIcon />
+                        </IconButton>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </CardContent>
+      </Card>
 
-          <TableRow>
+      {/* ======================================================
+          DIALOG CARI BARANG
+      ====================================================== */}
 
-            <TableCell>Nomor</TableCell>
+      <CariBarangDialog
+        open={bukaDialogBarang}
+        onClose={() => setBukaDialogBarang(false)}
+        onSelect={pilihBarang}
+      />
 
-            <TableCell>Tanggal</TableCell>
+      {/* ======================================================
+          DETAIL RIWAYAT
+      ====================================================== */}
 
-            <TableCell>Status</TableCell>
+      {detailOpname && (
+        <Card
+          sx={{
+            position: "fixed",
+            inset: { xs: 8, sm: 24 },
+            zIndex: 1300,
+            overflow: "auto",
+            maxHeight: "calc(100vh - 16px)",
+            boxShadow: 8,
+          }}
+        >
+          <CardContent sx={{ p: { xs: 2, sm: 3 } }}>
+            <Stack
+              direction="row"
+              justifyContent="space-between"
+              alignItems="center"
+              mb={2}
+            >
+              <Typography variant="h6" fontWeight="bold">
+                Detail Stock Opname
+              </Typography>
 
-            <TableCell>Keterangan</TableCell>
-
-            <TableCell align="center">
-              Jumlah Item
-            </TableCell>
-
-            <TableCell align="center">
-              Aksi
-            </TableCell>
-
-          </TableRow>
-
-        </TableHead>
-
-        <TableBody>
-
-          {loading ? (
-
-            <TableRow>
-
-              <TableCell
-                colSpan={6}
-                align="center"
+              <Button
+                size="small"
+                onClick={() => setDetailOpname(null)}
               >
-                Memuat riwayat...
-              </TableCell>
+                Tutup
+              </Button>
+            </Stack>
 
-            </TableRow>
+            <Divider sx={{ mb: 2 }} />
 
-          ) : data.length === 0 ? (
+            <Stack spacing={0.75} mb={2}>
+              <Typography>
+                <strong>Nomor:</strong> {detailOpname.nomor || "-"}
+              </Typography>
+              <Typography>
+                <strong>Tanggal:</strong>{" "}
+                {detailOpname.tanggal
+                  ? new Date(detailOpname.tanggal).toLocaleString(
+                      "id-ID"
+                    )
+                  : "-"}
+              </Typography>
+              <Typography>
+                <strong>Status:</strong>{" "}
+                {detailOpname.status || "-"}
+              </Typography>
+              <Typography>
+                <strong>Keterangan:</strong>{" "}
+                {detailOpname.keterangan || "-"}
+              </Typography>
+            </Stack>
 
-            <TableRow>
-
-              <TableCell
-                colSpan={6}
-                align="center"
+            <TableContainer
+              component={Paper}
+              variant="outlined"
+              sx={{ overflowX: "auto" }}
+            >
+              <Table
+                size="small"
+                sx={{ minWidth: 650 }}
               >
-                Belum ada riwayat Stock Opname.
-              </TableCell>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Barang</TableCell>
+                    <TableCell align="right">
+                      Stok Sistem
+                    </TableCell>
+                    <TableCell align="right">
+                      Stok Fisik
+                    </TableCell>
+                    <TableCell align="right">
+                      Selisih
+                    </TableCell>
+                    <TableCell>Keterangan</TableCell>
+                  </TableRow>
+                </TableHead>
 
-            </TableRow>
-
-          ) : (
-
-            data.map((opname) => (
-
-              <TableRow key={opname.id}>
-
-                <TableCell>
-                  {opname.nomor}
-                </TableCell>
-
-                <TableCell>
-                  {new Date(
-                    opname.tanggal
-                  ).toLocaleString("id-ID")}
-                </TableCell>
-
-                <TableCell>
-                  {opname.status}
-                </TableCell>
-
-                <TableCell>
-                  {opname.keterangan || "-"}
-                </TableCell>
-
-                <TableCell align="center">
-                  {opname.detail?.length ?? 0}
-                </TableCell>
-
-                <TableCell align="center">
-
-                  <Button
-                    size="small"
-                    variant="outlined"
-                  >
-                    Detail
-                  </Button>
-
-                </TableCell>
-
-              </TableRow>
-
-            ))
-
-          )}
-
-        </TableBody>
-
-      </Table>
-
-    </Paper>
-
-  </CardContent>
-</Card>
-    <CariBarangDialog
-  open={bukaDialogBarang}
-  onClose={() => setBukaDialogBarang(false)}
-  onSelect={pilihBarang}
-/>
-
-  </Box>
-);
-  <></>
+                <TableBody>
+                  {detailOpname.detail?.length ? (
+                    detailOpname.detail.map(
+                      (detail: any, index: number) => (
+                        <TableRow
+                          key={detail.id ?? index}
+                        >
+                          <TableCell>
+                            {detail.nama_barang ??
+                              detail.barang?.nama_barang ??
+                              detail.barang_id ??
+                              "-"}
+                          </TableCell>
+                          <TableCell align="right">
+                            {detail.stok_sistem ?? 0}
+                          </TableCell>
+                          <TableCell align="right">
+                            {detail.stok_fisik ?? 0}
+                          </TableCell>
+                          <TableCell align="right">
+                            {detail.selisih ?? 0}
+                          </TableCell>
+                          <TableCell>
+                            {detail.keterangan || "-"}
+                          </TableCell>
+                        </TableRow>
+                      )
+                    )
+                  ) : (
+                    <TableRow>
+                      <TableCell colSpan={5} align="center">
+                        Detail barang tidak tersedia.
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </CardContent>
+        </Card>
+      )}
+    </Box>
+  );
 }
