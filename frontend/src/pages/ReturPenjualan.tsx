@@ -52,6 +52,7 @@ type ReturPenjualanWithReason =
   };
 
 export default function ReturPenjualan() {
+
   const isMobile = useMediaQuery("(max-width:600px)");
 
   // =====================================
@@ -818,14 +819,14 @@ const simpanRetur = async () => {
 
     <Box
       sx={{
-      display: "flex",
-      flexDirection: { xs: "column", sm: "row" },
-      justifyContent: "space-between",
-      alignItems: { xs: "stretch", sm: "center" },
-      gap: 1.5,
-      mb: 2,
-    }}
-  >
+        display: "flex",
+        flexDirection: { xs: "column", sm: "row" },
+        justifyContent: "space-between",
+        alignItems: { xs: "stretch", sm: "center" },
+        gap: 1.5,
+        mb: 2,
+      }}
+    >
 
       <TextField
         label="Cari Retur"
@@ -834,8 +835,8 @@ const simpanRetur = async () => {
           setSearch(e.target.value)
         }
         sx={{
-           width: { xs: "100%", sm: 350 },
-          }}
+          width: { xs: "100%", sm: 350 },
+        }}
       />
 
       {canCreate && (
@@ -845,6 +846,10 @@ const simpanRetur = async () => {
           onClick={() =>
             setOpenBarang(true)
           }
+          sx={{
+            minHeight: 44,
+            width: { xs: "100%", sm: "auto" },
+          }}
         >
           Tambah Barang Retur
         </Button>
@@ -852,7 +857,18 @@ const simpanRetur = async () => {
 
     </Box>
 
-    <Table>
+    <Box
+      sx={{
+        width: "100%",
+        overflowX: "auto",
+      }}
+    >
+      <Table
+        sx={{
+          minWidth: 700,
+          whiteSpace: "nowrap",
+        }}
+      >
 
       <TableHead>
 
@@ -1023,17 +1039,24 @@ const simpanRetur = async () => {
       </TableBody>
 
     </Table>
-        <Divider sx={{ my: 3 }} />
+    </Box>
+
+    <Divider sx={{ my: 3 }} />
 
     <Box
-      display="flex"
-      justifyContent="space-between"
-      alignItems="center"
+      sx={{
+        display: "flex",
+        flexDirection: { xs: "column", sm: "row" },
+        justifyContent: "space-between",
+        alignItems: { xs: "stretch", sm: "center" },
+        gap: 1,
+      }}
     >
 
       <Typography
         variant="h5"
         fontWeight="bold"
+        sx={{ fontSize: { xs: "1.15rem", sm: "1.5rem" } }}
       >
         Grand Total Retur : Rp{" "}
         {grandTotal.toLocaleString("id-ID")}
@@ -1048,10 +1071,13 @@ const simpanRetur = async () => {
     </Box>
 
     <Box
-      mt={3}
-      display="flex"
-      gap={2}
-      justifyContent="flex-end"
+      sx={{
+        mt: 3,
+        display: "flex",
+        flexDirection: { xs: "column-reverse", sm: "row" },
+        gap: 1.5,
+        justifyContent: "flex-end",
+      }}
     >
 
       {canCreate && (
@@ -1059,6 +1085,7 @@ const simpanRetur = async () => {
           variant="contained"
           color="success"
           size="large"
+          fullWidth={isMobile}
           disabled={
             !penjualan ||
             keranjang.length === 0
@@ -1073,6 +1100,7 @@ const simpanRetur = async () => {
         variant="outlined"
         color="error"
         size="large"
+        fullWidth={isMobile}
         onClick={() => {
 
           setKeranjang([]);
@@ -1103,315 +1131,285 @@ const simpanRetur = async () => {
     >
       Total data: {total}
     </Typography>
-  {isMobile && (
-  <Box sx={{ mt: 2 }}>
-    {loading && (
-      <Box sx={{ textAlign: "center", py: 3 }}>
-        <CircularProgress />
-      </Box>
-    )}
 
-    {!loading && data.length === 0 && (
-      <Paper
-        variant="outlined"
-        sx={{
-          p: 2,
-          textAlign: "center",
-          borderRadius: 2,
-        }}
-      >
-        Belum ada data retur.
-      </Paper>
-    )}
-
-    {!loading &&
-      data.map((item) => (
-        <Paper
-          key={item.id}
-          variant="outlined"
-          sx={{
-            p: 2,
-            mb: 1.5,
-            borderRadius: 2,
-          }}
-        >
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "space-between",
-              gap: 1,
-              mb: 1,
-            }}
-          >
-            <Typography fontWeight="bold">
-              {item.no_retur}
-            </Typography>
-
-            <Typography
-              variant="body2"
-              color="text.secondary"
-            >
-              {item.tanggal}
-            </Typography>
-          </Box>
-
-          <Typography variant="body2">
-            Penjualan: {item.penjualan_id}
-          </Typography>
-
-          <Typography variant="body2">
-            Status: {item.status}
-          </Typography>
-
-          <Typography
-            sx={{
-              mt: 1,
-              fontWeight: "bold",
-            }}
-          >
-            Total: Rp{" "}
-            {Number(item.total).toLocaleString("id-ID")}
-          </Typography>
-        </Paper>
-      ))}
-  </Box>
-)}
-    
-    <Box
-  sx={{
-    mt: 2,
-    width: "100%",
-    overflowX: "auto",
-    display: isMobile ? "none" : "block",
-  }}
->
-  <Table
-    sx={{
-      minWidth: 720,
-      whiteSpace: "nowrap",
-    }}
-  >
-
-      <TableHead>
-
-        <TableRow>
-
-          <TableCell>No Retur</TableCell>
-
-          <TableCell>Tanggal</TableCell>
-
-          <TableCell>Penjualan</TableCell>
-
-          <TableCell>Status</TableCell>
-
-          <TableCell align="right">
-            Total
-          </TableCell>
-
-          <TableCell align="center">
-            Aksi
-          </TableCell>
-
-        </TableRow>
-
-      </TableHead>
-
-      <TableBody>
-
+    {isMobile && (
+      <Box sx={{ mt: 2 }}>
         {loading && (
-
-          <TableRow>
-
-            <TableCell
-              colSpan={6}
-              align="center"
-            >
-
-              <CircularProgress />
-
-            </TableCell>
-
-          </TableRow>
-
+          <Box sx={{ textAlign: "center", py: 3 }}>
+            <CircularProgress />
+          </Box>
         )}
 
-        {!loading &&
-          data.length === 0 && (
-
-          <TableRow>
-
-            <TableCell
-              colSpan={6}
-              align="center"
-            >
-
-              Belum ada data retur.
-
-            </TableCell>
-
-          </TableRow>
-
+        {!loading && data.length === 0 && (
+          <Paper
+            variant="outlined"
+            sx={{
+              p: 2,
+              textAlign: "center",
+              borderRadius: 2,
+              mb: 1.5,
+            }}
+          >
+            Belum ada data retur.
+          </Paper>
         )}
 
         {!loading &&
           data.map((item) => (
+            <Paper
+              key={item.id}
+              variant="outlined"
+              sx={{
+                p: 2,
+                mb: 1.5,
+                borderRadius: 2,
+              }}
+            >
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "flex-start",
+                  gap: 1,
+                  mb: 1,
+                }}
+              >
+                <Typography
+                  fontWeight="bold"
+                  sx={{ wordBreak: "break-word" }}
+                >
+                  {item.no_retur}
+                </Typography>
 
-          <TableRow
-            key={item.id}
-          >
-
-            <TableCell>
-
-              {item.no_retur}
-
-            </TableCell>
-
-            <TableCell>
-
-              {item.tanggal}
-
-            </TableCell>
-
-            <TableCell>
-
-              {item.penjualan_id}
-
-            </TableCell>
-
-            <TableCell>
-
-              {item.status === "DRAFT"
-                ? "DRAFT"
-                : item.status === "SELESAI"
-                ? "SELESAI"
-                : item.status === "BATAL"
-                ? "DITOLAK"
-                : item.status}
-
-            </TableCell>
-
-            <TableCell align="right">
-
-              Rp{" "}
-
-              {Number(
-                item.total
-              ).toLocaleString("id-ID")}
-
-            </TableCell>
-
-            <TableCell align="center">
-
-              {item.status === "DRAFT" &&
-                canUpdate && (
-                  <Button
-                    size="small"
-                    variant="outlined"
-                    onClick={() =>
-                      void handleEditRetur(
-                        item
-                      )
-                    }
-                    disabled={
-                      processingAction
-                    }
-                    sx={{
-                      mr: 1,
-                      mb: 1,
-                    }}
-                  >
-                    Edit
-                  </Button>
-                )}
-
-              {item.status === "DRAFT" &&
-                canDelete && (
-                  <Button
-                    size="small"
-                    color="error"
-                    variant="outlined"
-                    onClick={() =>
-                      void handleDeleteRetur(
-                        item
-                      )
-                    }
-                    disabled={
-                      processingAction
-                    }
-                    sx={{
-                      mr: 1,
-                      mb: 1,
-                    }}
-                  >
-                    Hapus
-                  </Button>
-                )}
-
-              {item.status === "DRAFT" &&
-                canUpdate && (
-                  <Button
-                    size="small"
-                    color="success"
-                    variant="outlined"
-                    onClick={() =>
-                      void handleApproveRetur(
-                        item
-                      )
-                    }
-                    disabled={
-                      processingAction
-                    }
-                    sx={{
-                      mr: 1,
-                      mb: 1,
-                    }}
-                  >
-                    Setujui
-                  </Button>
-                )}
-
-              {item.status === "DRAFT" &&
-                canUpdate && (
-                  <Button
-                    size="small"
-                    color="warning"
-                    variant="outlined"
-                    onClick={() =>
-                      handleOpenReject(
-                        item
-                      )
-                    }
-                    disabled={
-                      processingAction
-                    }
-                    sx={{
-                      mb: 1,
-                    }}
-                  >
-                    Tolak
-                  </Button>
-                )}
-
-              {item.status !== "DRAFT" && (
                 <Typography
                   variant="body2"
                   color="text.secondary"
+                  sx={{ textAlign: "right", flexShrink: 0 }}
+                >
+                  {item.tanggal}
+                </Typography>
+              </Box>
+
+              <Typography variant="body2" sx={{ mb: 0.5 }}>
+                Penjualan: {item.penjualan_id}
+              </Typography>
+
+              <Typography variant="body2" sx={{ mb: 0.5 }}>
+                Status: {item.status === "DRAFT"
+                  ? "DRAFT"
+                  : item.status === "SELESAI"
+                  ? "SELESAI"
+                  : item.status === "BATAL"
+                  ? "DITOLAK"
+                  : item.status}
+              </Typography>
+
+              <Typography
+                sx={{
+                  mt: 1,
+                  fontWeight: "bold",
+                }}
+              >
+                Total: Rp {Number(item.total).toLocaleString("id-ID")}
+              </Typography>
+
+              {item.status === "DRAFT" ? (
+                <Box
+                  sx={{
+                    display: "flex",
+                    flexWrap: "wrap",
+                    gap: 1,
+                    mt: 1.5,
+                  }}
+                >
+                  {canUpdate && (
+                    <Button
+                      size="small"
+                      variant="outlined"
+                      onClick={() => void handleEditRetur(item)}
+                      disabled={processingAction}
+                    >
+                      Edit
+                    </Button>
+                  )}
+
+                  {canDelete && (
+                    <Button
+                      size="small"
+                      color="error"
+                      variant="outlined"
+                      onClick={() => void handleDeleteRetur(item)}
+                      disabled={processingAction}
+                    >
+                      Hapus
+                    </Button>
+                  )}
+
+                  {canUpdate && (
+                    <Button
+                      size="small"
+                      color="success"
+                      variant="outlined"
+                      onClick={() => void handleApproveRetur(item)}
+                      disabled={processingAction}
+                    >
+                      Setujui
+                    </Button>
+                  )}
+
+                  {canUpdate && (
+                    <Button
+                      size="small"
+                      color="warning"
+                      variant="outlined"
+                      onClick={() => handleOpenReject(item)}
+                      disabled={processingAction}
+                    >
+                      Tolak
+                    </Button>
+                  )}
+                </Box>
+              ) : (
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  sx={{ mt: 1 }}
                 >
                   Tidak ada aksi
                 </Typography>
               )}
+            </Paper>
+          ))}
+      </Box>
+    )}
 
-            </TableCell>
+    {!isMobile && (
+      <Box
+        sx={{
+          mt: 2,
+          width: "100%",
+          overflowX: "auto",
+        }}
+      >
+        <Table
+          sx={{
+            minWidth: 720,
+            whiteSpace: "nowrap",
+          }}
+        >
+          <TableHead>
+            <TableRow>
+              <TableCell>No Retur</TableCell>
+              <TableCell>Tanggal</TableCell>
+              <TableCell>Penjualan</TableCell>
+              <TableCell>Status</TableCell>
+              <TableCell align="right">Total</TableCell>
+              <TableCell align="center">Aksi</TableCell>
+            </TableRow>
+          </TableHead>
 
-          </TableRow>
+          <TableBody>
+            {loading && (
+              <TableRow>
+                <TableCell colSpan={6} align="center">
+                  <CircularProgress />
+                </TableCell>
+              </TableRow>
+            )}
 
-        ))}
+            {!loading && data.length === 0 && (
+              <TableRow>
+                <TableCell colSpan={6} align="center">
+                  Belum ada data retur.
+                </TableCell>
+              </TableRow>
+            )}
 
-      </TableBody>
+            {!loading &&
+              data.map((item) => (
+                <TableRow key={item.id}>
+                  <TableCell>{item.no_retur}</TableCell>
+                  <TableCell>{item.tanggal}</TableCell>
+                  <TableCell>{item.penjualan_id}</TableCell>
+                  <TableCell>
+                    {item.status === "DRAFT"
+                      ? "DRAFT"
+                      : item.status === "SELESAI"
+                      ? "SELESAI"
+                      : item.status === "BATAL"
+                      ? "DITOLAK"
+                      : item.status}
+                  </TableCell>
+                  <TableCell align="right">
+                    Rp {Number(item.total).toLocaleString("id-ID")}
+                  </TableCell>
+                  <TableCell align="center">
+                    {item.status === "DRAFT" && canUpdate && (
+                      <Button
+                        size="small"
+                        variant="outlined"
+                        onClick={() => void handleEditRetur(item)}
+                        disabled={processingAction}
+                        sx={{ mr: 1, mb: 1 }}
+                      >
+                        Edit
+                      </Button>
+                    )}
 
-    </Table>
+                    {item.status === "DRAFT" && canDelete && (
+                      <Button
+                        size="small"
+                        color="error"
+                        variant="outlined"
+                        onClick={() => void handleDeleteRetur(item)}
+                        disabled={processingAction}
+                        sx={{ mr: 1, mb: 1 }}
+                      >
+                        Hapus
+                      </Button>
+                    )}
 
-    </Box>
+                    {item.status === "DRAFT" && canUpdate && (
+                      <Button
+                        size="small"
+                        color="success"
+                        variant="outlined"
+                        onClick={() => void handleApproveRetur(item)}
+                        disabled={processingAction}
+                        sx={{ mr: 1, mb: 1 }}
+                      >
+                        Setujui
+                      </Button>
+                    )}
+
+                    {item.status === "DRAFT" && canUpdate && (
+                      <Button
+                        size="small"
+                        color="warning"
+                        variant="outlined"
+                        onClick={() => handleOpenReject(item)}
+                        disabled={processingAction}
+                        sx={{ mb: 1 }}
+                      >
+                        Tolak
+                      </Button>
+                    )}
+
+                    {item.status !== "DRAFT" && (
+                      <Typography
+                        variant="body2"
+                        color="text.secondary"
+                      >
+                        Tidak ada aksi
+                      </Typography>
+                    )}
+                  </TableCell>
+                </TableRow>
+              ))}
+          </TableBody>
+        </Table>
+      </Box>
+    )}
 
   </Paper>
 
